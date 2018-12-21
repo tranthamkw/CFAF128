@@ -7,7 +7,7 @@
 
 
 
-    void initSPI(void);
+    int initSPI(void);
     unsigned char writeSPI(char data_out);
 
 
