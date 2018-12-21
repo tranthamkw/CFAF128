@@ -2,7 +2,7 @@
 
 #include "simpleGFX.h"
 #include <string.h>
-#include "RS485.h"
+#include "piBoard.h"
 #include "cfaf128.h"
 
 

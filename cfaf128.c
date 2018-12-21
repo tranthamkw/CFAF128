@@ -1,7 +1,5 @@
-#include <pic18f46k22.h>
 #include "mySPI.h"
 #include "cfaf128.h"
-#include "mcc_generated_files/mcc.h"
 
 #define LCD_DC PORTCbits.RC0
 #define LCD_CS PORTCbits.RC1
@@ -32,7 +30,7 @@
 #define ST7735_VSCRDEF 0x33
 #define ST7735_VSCRSADD 0x37
 
-//----------------------------------------------------------------------------
+/* //----------------------------------------------------------------------------
 void delay(unsigned int time){ // time in mS
     unsigned long i,k;
     
@@ -44,7 +42,7 @@ void delay(unsigned int time){ // time in mS
     
 }
 
-
+*/
 void SPI_sendCommand(char command)
   {
 	//digitalWrite(LCD_DC,LOW);

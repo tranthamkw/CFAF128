@@ -19,8 +19,6 @@ static uint32_t    spiSpeeds [2] ;
 static int         spiFds [2] ;
 
 
-
-
 /*
  * wiringPiSPIDataRW:
  *	Write and Read a block of data over the SPI bus.
@@ -91,8 +89,9 @@ int initSPI(){
 return wiringPiSPISetupMode (0, 20000, 0) ;
 }
 
+
 unsigned char writeSPI(char data_out){
-    unsigned char TempVar;
+    unsigned char TempVar=0;
 
 
 	return(TempVar);

@@ -5,12 +5,6 @@
  * Created on June 30, 2018, 7:10 PM
  */
 
-#ifndef SIMPLEGFX_H
-#define	SIMPLEGFX_H
-
-#ifdef	__cplusplus
-extern "C" {
-#endif
 
 // index of color codes
 // it.labelpartners.com/pantone_coated_table.html
@@ -44,11 +38,4 @@ void printLine(char*c, char len, unsigned short fcolor, unsigned short bcolor);
  */
     
 
-
-
-#ifdef	__cplusplus
-}
-#endif
-
-#endif	/* SIMPLEGFX_H */
 

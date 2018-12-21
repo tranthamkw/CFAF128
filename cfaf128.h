@@ -5,12 +5,6 @@
  * Created on June 30, 2018, 7:19 PM
  */
 
-#ifndef CFAF128_H
-#define	CFAF128_H
-
-#ifdef	__cplusplus
-extern "C" {
-#endif
 
 /*
  Display is Crystalfontz CFAF128128B1-0145T
@@ -39,13 +33,7 @@ void displayPixels(char* pixels, unsigned short y1);
 void setScrollDefinition(char top_fix_height, char bottom_fix_height, char scroll_direction);
 void verticalScroll(char vsp);
 
-void delay(unsigned int time);
+//void delay(unsigned int time);
 
 
-
-#ifdef	__cplusplus
-}
-#endif
-
-#endif	/* CFAF128_H */
 
