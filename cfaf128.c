@@ -46,7 +46,7 @@ void sendSPIData(unsigned char* data, unsigned int bytes, unsigned char chan)
 rx is receive buffer and needs to be as big as the out going data buffer
 The LCD display does not send data back, but SPI is inherently fullduplex. As n bits of data are sent out, n bits of unknown data is
 shifted in to a receive buffer. this is why they need to be the same size.  Nothing is done with this data. 
-The original wiringPiSPI function recieved into the same, outgoing data buffer. Thus, this would erase the data. 
+The original wiringPiSPI function recieved into the same, outgoing data buffer. This would erase the data. 
 In this implimentation, pixels are manipulated in another function/library buffer and should not be erased.
 */
 	unsigned char rx[bytes];
@@ -56,8 +56,7 @@ In this implimentation, pixels are manipulated in another function/library buffe
   }
 
 void resetLCD(unsigned char chan){
-	printf("Reset display channel %d\n",chan);
-
+//	printf("Reset display channel %d\n",chan);
 	digitalWrite(LCD_RST-chan,HIGH);
 	delay(150);//120mS max
 	digitalWrite(LCD_RST-chan,LOW);
@@ -79,7 +78,7 @@ void initLCD(unsigned char chan){
 	pinMode(LCD_RST-chan,OUTPUT);
 	pinMode(LCD_DC-chan,OUTPUT);
 
-	myPiSPISetup(chan,1000000);
+	myPiSPISetup(chan,4000000);
 
 	resetLCD(chan);
 
@@ -245,13 +244,15 @@ void displayPixels(char* pixels, unsigned short y1,unsigned char chan){
 	12 bits per pixel
 	*/
 
-	unsigned short i,j;
+	unsigned short i;
 	Set_LCD_for_write_at_X_Y(0, y1,chan);
 	char* temp;
-	for (i=0; i<8; i++){
-		temp = &pixels[i*192];//128 * 1.5 bytes/pixel
+
+	//for (i=0; i<8; i++){
+//		temp = &pixels[i*192];  //128 * 1.5 bytes/pixel
+		temp = &pixels[y1*192];  //128 * 1.5 bytes/pixel
 		sendSPIData(temp,192,chan);
-	}
+	//}
 
 }
 

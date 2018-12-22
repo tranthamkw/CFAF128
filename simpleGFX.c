@@ -3,37 +3,47 @@
 #include "cfaf128.h"
 
 
-static char pixelBuffer[1536];  
-static int lineNum;
 
-// the pixel buffer for one line of text
-// 8 lines (y) * 128 columns (x) * 1.5 colors = 1536
-// the idea is to build a line of text with desired colors
-// then call updateLline at the desired line in the display
-// this way, a block transfer of 3072 bytes can be written to the  LCD
-// instead of pixel by pixel at location x,y
+unsigned char pixelBuffer[24576];
+/*
+	128 lines (y-coordinate) * 128 columns (x-coordinate) * 1.5 bytes per pixel = 24576
+
+4 bits per color so 12 bits of information per pixel
+image is manipulated in pixelBuffer, then send pixel information in cfaf128.c one, complete line at at time.
+pixelBuffer is char, so holds two of the three R, G, B values needed for a  pixel. Algorithm depends on if the pixel x value is even or odd.
+
+Let Line# =0 (y=0)
+
+pixelBuff[k]	k=	 0    1    2   3   4	 5   6    7    8						189  190  191
+	k(x even)=								 3*x/2	 +1
+	k (x odd)=			integer division trunc decimal-->		 3*x/2   +1
+color image data =	(RG)(B  R)(GB)(RG)(B  R)(GB)(RG)(B  R)(GB)  . . .	(RG)	(B  R)	(GB)   . . .	(RG)(B  R)(GB)
+Pixel x =		[  0  ][  1  ][  2  ][  3  ][  4  ][  5  ]		[   even  ][  odd  ]		[ 126 ][ 127 ]
+
+
+for line number  y,  k = 3*x/2 + 192*y
+
+*/
 
 void initDisplay(void){
 
-unsigned int i,k,j;
+unsigned int i,j;
 
     initLCD(0);
 
     Fill_LCD(0,0,0,0);
    // paints splash screen from image[] in "font.h"
-	for (i=0;i<16;i++){
-        for (k=0;k<8;k++){
-            for (j=0;j<192;j++){
-                pixelBuffer[j+192*k]=image[j+192*(k+i*8)];
-            }
-        }
-	 updateLine(i);
+	for (i=0;i<128;i++){
+			for (j=0;j<192;j++){
+				pixelBuffer[j+192*i]=image[j+192*i];
+			}
+	updateLine(i,0);
 	}
 
 
  
 }
-/*
+
 void setPixel (char x, char y, unsigned short color){
 	unsigned short k;
 	char red, green, blue;
@@ -52,9 +62,8 @@ void setPixel (char x, char y, unsigned short color){
 	pixelBuffer[y*192 + k] = (red <<4) | green;
 	pixelBuffer[y*192 + k + 1] = (pixelBuffer[y*192 + k+1] & 0x0F) | (blue<<4);
 	}
-
 }
-*/
+
 
 /*
 void clearLine(unsigned short color){
@@ -105,9 +114,9 @@ void writeText(char column, char* c, char start, char length, unsigned short fco
 }
 */
 
-void updateLine(char line){
+void updateLine(char line, unsigned char chan){
 
-    displayPixels(pixelBuffer, line*8,0);
+    displayPixels(pixelBuffer, line,chan);
 
 }
 
