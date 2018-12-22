@@ -26,15 +26,18 @@
 #define ST7735_VSCRDEF 0x33
 #define ST7735_VSCRSADD 0x37
 
+// for display #1
+//#define LCD_DC 24
+//#define LCD_RST 22
 // for display #0
-#define LCD_DC 24
-#define LCD_RST 22
-// for display #1, DC=24 RST=22, just subtract 1
+#define LCD_DC 25
+#define LCD_RST 23
+// for display #1, just subtract 1
 
 void SPI_sendCommand(unsigned char command, unsigned char chan)
   {
 	unsigned char rx;
-	digitalWrite(LCD_DC,LOW);
+	digitalWrite(LCD_DC-chan,LOW);
 	if (myPiSPIDataRW(chan,&command, &rx, 1) <0) printf("Error sending command %02x\n",command);
   }
 void sendSPIData(unsigned char* data, unsigned int bytes, unsigned char chan)
@@ -47,17 +50,19 @@ The original wiringPiSPI function recieved into the same, outgoing data buffer. 
 In this implimentation, pixels are manipulated in another function/library buffer and should not be erased.
 */
 	unsigned char rx[bytes];
-	digitalWrite(LCD_DC,HIGH);
+	digitalWrite(LCD_DC-chan,HIGH);
 	if (myPiSPIDataRW(chan,data,rx,bytes) <0) printf("Error sending data %02x\n",data);	
 
   }
 
 void resetLCD(unsigned char chan){
-	digitalWrite(LCD_RST,HIGH);
+	printf("Reset display channel %d\n",chan);
+
+	digitalWrite(LCD_RST-chan,HIGH);
 	delay(150);//120mS max
-	digitalWrite(LCD_RST,LOW);
+	digitalWrite(LCD_RST-chan,LOW);
 	delay(50);//10uS min
-	digitalWrite(LCD_RST,HIGH);
+	digitalWrite(LCD_RST-chan,HIGH);
 	delay(150);//120mS max
 }
 
@@ -71,8 +76,8 @@ void initLCD(unsigned char chan){
 	// display 0 or 1
 	chan &=1;
 
-	pinMode(LCD_RST,OUTPUT);
-	pinMode(LCD_DC,OUTPUT);
+	pinMode(LCD_RST-chan,OUTPUT);
+	pinMode(LCD_DC-chan,OUTPUT);
 
 	myPiSPISetup(chan,1000000);
 
