@@ -38,9 +38,7 @@ void initDisplay(void){
 }
 
 void updateDisplay(unsigned char chan){
-
     displayPixels(pixelBuffer, 0, 128, chan);
-
 }
 
 void drawBox(short x1, short y1, short x2, short y2, unsigned short color){
@@ -53,7 +51,6 @@ void drawBox(short x1, short y1, short x2, short y2, unsigned short color){
 		setPixel(x1,j,color);
 		setPixel(x2,j,color);
 	}
-
 }
 
 
@@ -62,24 +59,17 @@ void drawLine(short x0, short y0, short x1, short y1, unsigned short color){
 	short t,dx,dy,err,ystep;
 	if (steep){
 		t=x0; // swap x0 and y0
-		x0=y0;
-		y0=t;
+		x0=y0;		y0=t;
 		t=x1; // swap x1 and y1
-		x1=y1;
-		y1=t;
+		x1=y1;		y1=t;
 	}
 	if (x0>x1){
 		t=x0; //swap x0 and x1
-		x0=x1;
-		x1=t;
+		x0=x1;		x1=t;
 		t=y0; //swap y0 and y1
-		y1=y0;
-		y0=t;
+		y1=y0;		y0=t;
 	}
-
-	dx=x1-x0;
-	dy=abs(y1-y0);
-	err = dx/2;
+	dx=x1-x0; dy=abs(y1-y0); err = dx/2;
 	if (y0<y1){
 		ystep = 1;
 	} else {
@@ -93,8 +83,7 @@ void drawLine(short x0, short y0, short x1, short y1, unsigned short color){
 		}
 		err -= dy;
 		if (err<0){
-			y0+=ystep;
-			err +=dx;
+			y0+=ystep; err +=dx;
 		}
 	}
 }
@@ -107,29 +96,18 @@ void drawCircle(short x0, short y0, short r, unsigned short color){
 	short x=0;
 	short y=r;
 
-	setPixel(x0,y0+r,color);
-	setPixel(x0,y0-r,color);
-	setPixel(x0+r,y0,color);
-	setPixel(x0-r,y0,color);
+	setPixel(x0,y0+r,color);	setPixel(x0,y0-r,color);
+	setPixel(x0+r,y0,color);	setPixel(x0-r,y0,color);
 
 	while (x<y){
 		if (f>=0){
-		y--;
-		ddFy+=2;
-		f+=ddFy;
+		y--; 	ddFy+=2;	f+=ddFy;
 		}
-	x++;
-	ddFx+=2;
-	f+=ddFx;
-
-	setPixel(x0+x,y0+y,color);
-	setPixel(x0-x,y0+y,color);
-	setPixel(x0+x,y0-y,color);
-	setPixel(x0-x,y0-y,color);
-	setPixel(x0+y,y0+x,color);
-	setPixel(x0-y,y0+x,color);
-	setPixel(x0+y,y0-x,color);
-	setPixel(x0-y,y0-x,color);
+	x++; 	ddFx+=2;	f+=ddFx;
+	setPixel(x0+x,y0+y,color);	setPixel(x0-x,y0+y,color);
+	setPixel(x0+x,y0-y,color);	setPixel(x0-x,y0-y,color);
+	setPixel(x0+y,y0+x,color);	setPixel(x0-y,y0+x,color);
+	setPixel(x0+y,y0-x,color);	setPixel(x0-y,y0-x,color);
 	}
 }
 
@@ -158,67 +136,25 @@ void setPixel (short x0, short y0, unsigned short color){
 }
 
 
-
-/*
-void writeText(char column, char* c, char start, char length, unsigned short fcolor, unsigned short bcolor){
-     Use this to build a line of text. This only writes to a pixel
-      buffer.  Call updateLine to actually write out the pixel data
-    
+void writeText(unsigned char x0,unsigned char y0, char* c, char length, unsigned short fcolor){
+//     Use this to build a line of text. This only writes to a pixel
+  //    buffer.  Call updateLine to actually write out the pixel data
 	char i,j,k,s;
-    char x;
-    x=column * 6;
+	//char x;
+    //x = column * 6;
         for (i=0; i<length;i++){
             for (j=0;j<5;j++){ // x direction
                 for (k=0;k<8;k++){  // y direction
                     s=(0x01 << k);
-                    if ((myFont[c[i+start]*5+j] & s)==s){
-                        setPixel(i*6+j+x, 7-k, fcolor);
-                    }else{
-                        setPixel(i*6+j+x, 7-k, bcolor);
+                    if ((myFont[c[i]*5+j] & s)==s){
+                        setPixel(i*6+j+x0, 7-k+y0, fcolor);}
+                    /*}else{
+                        setPixel(i*6+j+x0, 7-k+y0, bcolor);
+					}*/
 				}
 			}
+//		for (k=0;k<8;k++) setPixel(i*6+j+x0,7-k+y0,bcolor);
 		}
-		for (k=0;k<8;k++) setPixel(i*6+j+x,7-k,bcolor);
-	}
-
-}
-*/
-
-
-
-
-/*
-void printLine(char*c, char len, unsigned short fcolor, unsigned short bcolor){
-   
-    unsigned short j,i,k;
-    unsigned short maxchar=21;
-    k=(unsigned short)len / maxchar;
-    j=(unsigned short)len % maxchar;
-    
-   for (i=0;i<k;i++){     
-    verticalScroll(lineNum+2);
-    clearLine(bcolor);
-    writeText(0, c, i*maxchar, maxchar, fcolor,bcolor);
-    if (lineNum==0){
-           displayPixels(pixelBuffer,0);
-    }else{
-        displayPixels(pixelBuffer,128-lineNum);
-    }
-    lineNum+=8;
-    lineNum = lineNum%126;
-    //126=16*8
-   }
-    
-    verticalScroll(lineNum+2);
-    clearLine(bcolor);
-    writeText(0, c, k*maxchar,j, fcolor,bcolor);
-    if (lineNum==0){
-           displayPixels(pixelBuffer,0);
-    }else{
-        displayPixels(pixelBuffer,128-lineNum);
-    }
-    lineNum+=8;
-    lineNum = lineNum%128;   
 }
 
 

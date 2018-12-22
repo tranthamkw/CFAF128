@@ -20,7 +20,7 @@ void drawLine(short x0, short y0, short x1, short y1, unsigned short color);
 
 void setPixel (short x0, short y0, unsigned short color);
 
-//void writeText(char column, char* c, char start, char length, unsigned short fcolor, unsigned short bcolor);
+void writeText(unsigned char x0,unsigned char y0, char* c, char length, unsigned short fcolor);
 
 //void clearLine(unsigned short color);
 //void printLine(char*c, char len, unsigned short fcolor, unsigned short bcolor);
