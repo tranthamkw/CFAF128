@@ -7,7 +7,7 @@ DUAL LCD driver for cfaf128x128 displays
 Each  Display is Crystalfontz CFAF128128B1-0145T
   https://www.crystalfontz.com/product/cfaf128128b10145t
 
-RasPi Board V3 wiring connection:
+RasPi Board V4 wiring connection:
 
 LCD 0:
 ________________
@@ -43,9 +43,15 @@ ________________| - 10 [DC]------->GPIO WPI24
 
 // chan is either 0 or 1 for each display respectively
 void initLCD(unsigned char chan);
-void Set_LCD_for_write_at_X_Y(char x, char y,unsigned char chan);
-void Fill_LCD(char R, char G, char B,unsigned char chan);
-void displayPixels(char* pixels, unsigned short y1,unsigned short y2, unsigned char chan);
+void displayPixels(char* pixels, unsigned char y1,unsigned char y2, unsigned char chan);
+
+
+
+// these no longer public.  all image maniuplation is done at the simpleGFX level, and displayPixels is used
+// to push the image data out to the display.
+//void Set_LCD_for_write_at_X_Y(char x, char y,unsigned char chan);
+//void Fill_LCD(char R, char G, char B,unsigned char chan);
+
 
 
 

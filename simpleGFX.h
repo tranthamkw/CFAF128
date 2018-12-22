@@ -12,9 +12,13 @@
 
 
 void initDisplay(void);
+void updateDisplay(unsigned char chan);
 void charToHex (unsigned int value, char *result, char numPos );
+void drawBox(short x1, short y1, short x2, short y2, unsigned short color);
+void drawCircle(short x0, short y0, short r, unsigned short color);
+void drawLine(short x0, short y0, short x1, short y1, unsigned short color);
 
-void setPixel (char x, char y, unsigned short color);
+void setPixel (short x0, short y0, unsigned short color);
 
 //void writeText(char column, char* c, char start, char length, unsigned short fcolor, unsigned short bcolor);
 

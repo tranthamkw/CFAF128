@@ -40,11 +40,19 @@ void drawStartupScreen(void){
  */
 void main(void)
 {
-
+short i;
 
 	initializeBoard();
 
 	initDisplay();
+
+	drawBox(30,30,100,100,GREEN);
+	drawCircle(25,25,20, BLACK);
+
+	for (i=10;i<100;i+=5){
+	drawLine(10,10,i,100,RED);
+	}
+	updateDisplay(0);
 
 
 

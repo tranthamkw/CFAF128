@@ -1,8 +1,7 @@
 #include "simpleGFX.h"
 #include "font.h"
 #include "cfaf128.h"
-
-
+#include <stdlib.h>
 
 unsigned char pixelBuffer[24576];
 /*
@@ -20,37 +19,131 @@ pixelBuff[k]	k=	 0    1    2   3   4	 5   6    7    8						189  190  191
 color image data =	(RG)(B  R)(GB)(RG)(B  R)(GB)(RG)(B  R)(GB)  . . .	(RG)	(B  R)	(GB)   . . .	(RG)(B  R)(GB)
 Pixel x =		[  0  ][  1  ][  2  ][  3  ][  4  ][  5  ]		[   even  ][  odd  ]		[ 126 ][ 127 ]
 
-
 for line number  y,  k = 3*x/2 + 192*y
 
 */
 
 void initDisplay(void){
-
-unsigned int i,j;
-
-    initLCD(0);
-
-    Fill_LCD(0,0,0,0);
-   // paints splash screen from image[] in "font.h"
+	unsigned int i,j;
+	    initLCD(0);
+	// paints splash screen from image[] in "font.h"
 	for (i=0;i<128;i++){
 			for (j=0;j<192;j++){
 				pixelBuffer[j+192*i]=image[j+192*i];
 			}
 	}
 
-// update full image
+	// update full image
     displayPixels(pixelBuffer, 0, 128, 0);
+}
+
+void updateDisplay(unsigned char chan){
+
+    displayPixels(pixelBuffer, 0, 128, chan);
 
 }
 
-void setPixel (char x, char y, unsigned short color){
-	unsigned short k;
+void drawBox(short x1, short y1, short x2, short y2, unsigned short color){
+	unsigned char i,j;
+	for (i=x1;i<x2; i++){
+		setPixel(i,y1,color);
+		setPixel(i,y2,color);
+	}
+	for (j=y1;j<y2;j++){
+		setPixel(x1,j,color);
+		setPixel(x2,j,color);
+	}
+
+}
+
+
+void drawLine(short x0, short y0, short x1, short y1, unsigned short color){
+	char steep = (abs(y1-y0) > abs(x1-x0));
+	short t,dx,dy,err,ystep;
+	if (steep){
+		t=x0; // swap x0 and y0
+		x0=y0;
+		y0=t;
+		t=x1; // swap x1 and y1
+		x1=y1;
+		y1=t;
+	}
+	if (x0>x1){
+		t=x0; //swap x0 and x1
+		x0=x1;
+		x1=t;
+		t=y0; //swap y0 and y1
+		y1=y0;
+		y0=t;
+	}
+
+	dx=x1-x0;
+	dy=abs(y1-y0);
+	err = dx/2;
+	if (y0<y1){
+		ystep = 1;
+	} else {
+		ystep = -1;
+	}
+	for (;x0<=x1;x0++){
+		if (steep){
+			setPixel(y0,x0,color);
+		} else {
+			setPixel(x0,y0,color);
+		}
+		err -= dy;
+		if (err<0){
+			y0+=ystep;
+			err +=dx;
+		}
+	}
+}
+
+
+void drawCircle(short x0, short y0, short r, unsigned short color){
+	short f = 1- r;
+	short ddFx = 1;
+	short ddFy = -2*r;
+	short x=0;
+	short y=r;
+
+	setPixel(x0,y0+r,color);
+	setPixel(x0,y0-r,color);
+	setPixel(x0+r,y0,color);
+	setPixel(x0-r,y0,color);
+
+	while (x<y){
+		if (f>=0){
+		y--;
+		ddFy+=2;
+		f+=ddFy;
+		}
+	x++;
+	ddFx+=2;
+	f+=ddFx;
+
+	setPixel(x0+x,y0+y,color);
+	setPixel(x0-x,y0+y,color);
+	setPixel(x0+x,y0-y,color);
+	setPixel(x0-x,y0-y,color);
+	setPixel(x0+y,y0+x,color);
+	setPixel(x0-y,y0+x,color);
+	setPixel(x0+y,y0-x,color);
+	setPixel(x0-y,y0-x,color);
+	}
+}
+
+void setPixel (short x0, short y0, unsigned short color){
+	unsigned short k,x,y;
 	char red, green, blue;
 	blue = (char) ((color & 0xF00)>>8);
 	green = (char)((color & 0x0F0)>>4);
 	red = (char)(color & 0x00F);
-	//is j even or odd
+	//error trap  0 < x,y < 128
+	x = ((unsigned short) x0)& 0x7F;
+	y = ((unsigned short) y0)& 0x7F;
+
+	//is x even or odd
 	if((x & 0x01) == 1) {
 		//odd
 		k=(x*3/2);
@@ -65,29 +158,6 @@ void setPixel (char x, char y, unsigned short color){
 }
 
 
-/*
-void clearLine(unsigned short color){
-    int j,i,k;
-    char Tcolor[3];
-    char red, green, blue;
-	red = (char) ((color & 0xF00)>>8);
-	green = (char)((color & 0x0F0)>>4);
-	blue = (char)(color & 0x00F);
-  Tcolor[0]=(blue <<4) | green;
-  Tcolor[1]=(red <<4) | blue;
-  Tcolor[2]=(green <<4) | red;
-  
-  for (k=0;k<8;k++){
-       for (i=0; i<64;i++){
-           for (j=0;j<3;j++){
-           pixelBuffer[3*i+j + k*192]=Tcolor[j];
-          }
-            
-        }
-   }
-}
-
-*/
 
 /*
 void writeText(char column, char* c, char start, char length, unsigned short fcolor, unsigned short bcolor){
@@ -179,7 +249,6 @@ void itoa (int value, char *result, int base){
 
 */
 void charToHex (unsigned int value, char *result, char minPos ){
- 
 	char* ptr=result, *ptr1 = result, tmp_char;
 	unsigned int tmp_value;
 	char i=0;
@@ -194,11 +263,10 @@ void charToHex (unsigned int value, char *result, char minPos ){
                 *ptr++="0"[0];
                 i++;
             }
-			
 			*ptr--='\0';
 			while (ptr1<ptr){
 				tmp_char=*ptr;
 				*ptr-- = *ptr1;
 				*ptr1++ = tmp_char;
-			} 
+			}
 }

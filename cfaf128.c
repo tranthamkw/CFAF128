@@ -26,6 +26,7 @@
 #define ST7735_VSCRDEF 0x33
 #define ST7735_VSCRSADD 0x37
 
+// Defines for piBoard V4 (RASPI_Robot)
 // for display #1
 //#define LCD_DC 24
 //#define LCD_RST 22
@@ -212,6 +213,7 @@ void Set_LCD_for_write_at_X_Y(char x, char y,unsigned char chan)  {
   }
 
 
+
 void Fill_LCD(char R, char G, char B,unsigned char chan)  {
     /* 12 bit ; 4bits per pixel
      byte array:  [R,G][B,R][G,B]
@@ -236,11 +238,14 @@ void Fill_LCD(char R, char G, char B,unsigned char chan)  {
 
 
 
-void displayPixels(char* pixels, unsigned short y1, unsigned short y2,unsigned char chan){
+void displayPixels(char* pixels, unsigned char y1, unsigned char y2,unsigned char chan){
 
-	/*	writes an entire row (y=constant) to display buffer at a time from "pixels" array.
+	/*	writes one entire row (y=constant) to display buffer at a time from "pixels" array.
+
 	We can make this faster by only re-writing y1 to y2, knowing that is all that has changed. 
+
 	Pass y1=0 y2=128 for full refresh.
+
 	12 bits per pixel
 	*/
 
@@ -249,7 +254,6 @@ void displayPixels(char* pixels, unsigned short y1, unsigned short y2,unsigned c
 	char* temp;
 
 	for (i=y1; i<y2; i++){
-//		temp = &pixels[i*192];  //128 * 1.5 bytes/pixel
 		temp = &pixels[i*192];  //128 * 1.5 bytes/pixel
 		sendSPIData(temp,192,chan);
 	}
