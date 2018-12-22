@@ -236,7 +236,7 @@ void Fill_LCD(char R, char G, char B,unsigned char chan)  {
 
 
 
-void displayPixels(char* pixels, unsigned short y1,unsigned char chan){
+void displayPixels(char* pixels, unsigned short y1, unsigned short y2,unsigned char chan){
 
 	/*	writes an entire row (y=constant) to display buffer at a time from "pixels" array.
 	We can make this faster by only re-writing y1 to y2, knowing that is all that has changed. 
@@ -248,11 +248,11 @@ void displayPixels(char* pixels, unsigned short y1,unsigned char chan){
 	Set_LCD_for_write_at_X_Y(0, y1,chan);
 	char* temp;
 
-	//for (i=0; i<8; i++){
+	for (i=y1; i<y2; i++){
 //		temp = &pixels[i*192];  //128 * 1.5 bytes/pixel
-		temp = &pixels[y1*192];  //128 * 1.5 bytes/pixel
+		temp = &pixels[i*192];  //128 * 1.5 bytes/pixel
 		sendSPIData(temp,192,chan);
-	//}
+	}
 
 }
 

@@ -45,7 +45,7 @@ ________________| - 10 [DC]------->GPIO WPI24
 void initLCD(unsigned char chan);
 void Set_LCD_for_write_at_X_Y(char x, char y,unsigned char chan);
 void Fill_LCD(char R, char G, char B,unsigned char chan);
-void displayPixels(char* pixels, unsigned short y1,unsigned char chan);
+void displayPixels(char* pixels, unsigned short y1,unsigned short y2, unsigned char chan);
 
 
 

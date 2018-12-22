@@ -37,11 +37,11 @@ unsigned int i,j;
 			for (j=0;j<192;j++){
 				pixelBuffer[j+192*i]=image[j+192*i];
 			}
-	updateLine(i,0);
 	}
 
+// update full image
+    displayPixels(pixelBuffer, 0, 128, 0);
 
- 
 }
 
 void setPixel (char x, char y, unsigned short color){
@@ -114,11 +114,8 @@ void writeText(char column, char* c, char start, char length, unsigned short fco
 }
 */
 
-void updateLine(char line, unsigned char chan){
 
-    displayPixels(pixelBuffer, line,chan);
 
-}
 
 /*
 void printLine(char*c, char len, unsigned short fcolor, unsigned short bcolor){

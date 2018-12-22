@@ -17,7 +17,6 @@ void charToHex (unsigned int value, char *result, char numPos );
 void setPixel (char x, char y, unsigned short color);
 
 //void writeText(char column, char* c, char start, char length, unsigned short fcolor, unsigned short bcolor);
-void updateLine(char line, unsigned char chan);
 
 //void clearLine(unsigned short color);
 //void printLine(char*c, char len, unsigned short fcolor, unsigned short bcolor);
