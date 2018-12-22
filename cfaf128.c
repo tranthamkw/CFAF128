@@ -27,8 +27,8 @@
 #define ST7735_VSCRSADD 0x37
 
 // for display #0
-#define LCD_DC 25
-#define LCD_RST 23
+#define LCD_DC 24
+#define LCD_RST 22
 // for display #1, DC=24 RST=22, just subtract 1
 
 void SPI_sendCommand(unsigned char command, unsigned char chan)
@@ -53,11 +53,11 @@ In this implimentation, pixels are manipulated in another function/library buffe
   }
 
 void resetLCD(unsigned char chan){
-	digitalWrite(LCD_RST-1,HIGH);
+	digitalWrite(LCD_RST,HIGH);
 	delay(150);//120mS max
-	digitalWrite(LCD_RST-1,LOW);
+	digitalWrite(LCD_RST,LOW);
 	delay(50);//10uS min
-	digitalWrite(LCD_RST-1,HIGH);
+	digitalWrite(LCD_RST,HIGH);
 	delay(150);//120mS max
 }
 
@@ -71,9 +71,11 @@ void initLCD(unsigned char chan){
 	// display 0 or 1
 	chan &=1;
 
-	pinMode(LCD_RST-chan,OUTPUT);
-	pinMode(LCD_DC-chan,OUTPUT);
-	myPiSPISetup(chan,2000000);
+	pinMode(LCD_RST,OUTPUT);
+	pinMode(LCD_DC,OUTPUT);
+
+	myPiSPISetup(chan,1000000);
+
 	resetLCD(chan);
 
 	SPI_sendCommand(ST7735_SLPOUT,chan);//SLPOUT (11h): Sleep Out

@@ -17,8 +17,9 @@ void initDisplay(void){
 
 unsigned int i,k,j;
 
-    initLCD(0);
-    Fill_LCD(0,0,0,0);
+    initLCD(1);
+
+    Fill_LCD(0,0,0,1);
    // paints splash screen from image[] in "font.h"
 	for (i=0;i<16;i++){
         for (k=0;k<8;k++){
@@ -106,7 +107,7 @@ void writeText(char column, char* c, char start, char length, unsigned short fco
 
 void updateLine(char line){
 
-    displayPixels(pixelBuffer, line*8,0);
+    displayPixels(pixelBuffer, line*8,1);
 
 }
 
