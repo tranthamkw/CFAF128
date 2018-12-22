@@ -79,7 +79,7 @@ void initLCD(unsigned char chan){
 	pinMode(LCD_RST-chan,OUTPUT);
 	pinMode(LCD_DC-chan,OUTPUT);
 
-	myPiSPISetup(chan,4000000);
+	myPiSPISetup(chan,8000000);
 
 	resetLCD(chan);
 
