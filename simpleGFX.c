@@ -137,24 +137,51 @@ void setPixel (short x0, short y0, unsigned short color){
 
 
 void writeText(unsigned char x0,unsigned char y0, char* c, char length, unsigned short fcolor){
-//     Use this to build a line of text. This only writes to a pixel
-  //    buffer.  Call updateLine to actually write out the pixel data
+/*
+	writes text over existing image contained in pixel buffer.
+*/
 	char i,j,k,s;
-	//char x;
-    //x = column * 6;
         for (i=0; i<length;i++){
             for (j=0;j<5;j++){ // x direction
                 for (k=0;k<8;k++){  // y direction
                     s=(0x01 << k);
                     if ((myFont[c[i]*5+j] & s)==s){
                         setPixel(i*6+j+x0, 7-k+y0, fcolor);}
-                    /*}else{
-                        setPixel(i*6+j+x0, 7-k+y0, bcolor);
-					}*/
 				}
 			}
-//		for (k=0;k<8;k++) setPixel(i*6+j+x0,7-k+y0,bcolor);
 		}
+}
+
+void printLine(char* c, char length, unsigned short fcolor, unsigned short bcolor){
+	/*
+		fast clear bottom line and write a string. 
+	*/
+	//clear bottom line
+	short k,x,y;
+	char red, green, blue;
+	blue = (char) ((bcolor & 0xF00)>>8);
+	green = (char)((bcolor & 0x0F0)>>4);
+	red = (char)(bcolor & 0x00F);
+	for (y=0;y<9;y++){
+	for (x=0;x<128;x++){
+	//is x even or odd
+		if((x & 0x01) == 1) {
+		//odd
+			k=(x*3/2);
+			pixelBuffer[y*192 + k]=(pixelBuffer[y*192 +k] & 0xF0) | (red);
+			pixelBuffer[y*192 + k+1]=(green<<4) | blue;
+		} else {
+		//even
+			k=(x*3/2);
+			pixelBuffer[y*192 + k] = (red <<4) | green;
+			pixelBuffer[y*192 + k + 1] = (pixelBuffer[y*192 + k+1] & 0x0F) | (blue<<4);
+		}
+	}
+	}
+	// write the text to image data
+	writeText(0,0,c,length,fcolor);
+	//push out this change immediately
+    displayPixels(pixelBuffer, 0, 9, 0);
 }
 
 
