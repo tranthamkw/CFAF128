@@ -100,18 +100,14 @@ void writeText(char column, char* c, char start, char length, unsigned short fco
 		}
 		for (k=0;k<8;k++) setPixel(i*6+j+x,7-k,bcolor);
 	}
-    
-    
-    
+
 }
 */
 
 void updateLine(char line){
-    
-    
+
     displayPixels(pixelBuffer, line*8,0);
-    
-    
+
 }
 
 /*

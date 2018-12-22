@@ -8,7 +8,8 @@
 #include <iostream>
 #include <math.h>
 #include "Bitmap.cpp"
-
+#include <stdio.h>
+#include <string.h>
 
 using namespace std;
 
@@ -29,6 +30,8 @@ if (nNumberofArgs==3){
       cout<<"Number of Args "<<nNumberofArgs<<"\n";
       //load bitmap
       Bitmap* sourcebmap = new Bitmap(argv[1]);
+
+	if(sourcebmap->loaded){
 
 	strcpy(fileName,argv[2]);
 	fp=fopen(fileName,"w");
@@ -66,6 +69,14 @@ if (nNumberofArgs==3){
 	}
 
 	fclose(fp); 
+} else {
+printf("error loading bmp\n");
 }
+} else {
+
+printf("Usage::  ./exportBMP <source.bmp> <dataout.txt>\n");
+
+}
+
 return 0;
 }

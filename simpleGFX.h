@@ -9,6 +9,8 @@
 // index of color codes
 // it.labelpartners.com/pantone_coated_table.html
 // htmlcolorcodes.com
+
+
 void initDisplay(void);
 //void itoa(int value, char *result, int base);
 void charToHex (unsigned int value, char *result, char numPos );
@@ -29,18 +31,5 @@ void updateLine(char line);
 #define BLACK 0x000
 #define YELLOW 0xFF0
 
-
-/* 24bits per pixel
-#define RED 0xFF0000
-#define GREEN 0x00FF00
-#define BLUE 0x0000FF
-#define WHITE 0xFFFFFF
-#define BLACK 0x0
-#define YELLOW 0xFFFF00
-#define SILVER 0xC0C0C0
-#define MAGENTA 0xFF00FF
-#define CYAN 0x00FFFF
- */
-    
 
 
