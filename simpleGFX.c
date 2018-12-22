@@ -7,32 +7,32 @@ static char pixelBuffer[1536];
 static int lineNum;
 
 // the pixel buffer for one line of text
-// 8 lines (y) * 128 columns (x) * 1.5 colors = 
+// 8 lines (y) * 128 columns (x) * 1.5 colors = 1536
 // the idea is to build a line of text with desired colors
 // then call updateLline at the desired line in the display
 // this way, a block transfer of 3072 bytes can be written to the  LCD
 // instead of pixel by pixel at location x,y
 
 void initDisplay(void){
-	unsigned int i,k,j;
-    initLCD();
-   // Fill_LCD(0,0,0);
-    for (i=0;i<16;i++){
+
+unsigned int i,k,j;
+
+    initLCD(0);
+    Fill_LCD(0,0,0,0);
+   // paints splash screen from image[] in "font.h"
+	for (i=0;i<16;i++){
         for (k=0;k<8;k++){
             for (j=0;j<192;j++){
                 pixelBuffer[j+192*k]=image[j+192*(k+i*8)];
             }
         }
-        updateLine(i);
-    }
-    
-    
-    setScrollDefinition(2,2,0);
-    
-   
-   
-}
+	 updateLine(i);
+	}
 
+
+ 
+}
+/*
 void setPixel (char x, char y, unsigned short color){
 	unsigned short k;
 	char red, green, blue;
@@ -50,10 +50,12 @@ void setPixel (char x, char y, unsigned short color){
 		k=(x*3/2);
 	pixelBuffer[y*192 + k] = (red <<4) | green;
 	pixelBuffer[y*192 + k + 1] = (pixelBuffer[y*192 + k+1] & 0x0F) | (blue<<4);
-}
+	}
 
 }
+*/
 
+/*
 void clearLine(unsigned short color){
     int j,i,k;
     char Tcolor[3];
@@ -75,11 +77,13 @@ void clearLine(unsigned short color){
    }
 }
 
+*/
 
+/*
 void writeText(char column, char* c, char start, char length, unsigned short fcolor, unsigned short bcolor){
-    /* Use this to build a line of text. This only writes to a pixel
+     Use this to build a line of text. This only writes to a pixel
       buffer.  Call updateLine to actually write out the pixel data
-     */
+    
 	char i,j,k,s;
     char x;
     x=column * 6;
@@ -100,16 +104,17 @@ void writeText(char column, char* c, char start, char length, unsigned short fco
     
     
 }
+*/
 
 void updateLine(char line){
     
     
-    displayPixels(pixelBuffer, line*8);
+    displayPixels(pixelBuffer, line*8,0);
     
     
 }
 
-
+/*
 void printLine(char*c, char len, unsigned short fcolor, unsigned short bcolor){
    
     unsigned short j,i,k;
@@ -171,22 +176,20 @@ void itoa (int value, char *result, int base){
 
 */
 void charToHex (unsigned int value, char *result, char minPos ){
-    
-      
+ 
 	char* ptr=result, *ptr1 = result, tmp_char;
 	unsigned int tmp_value;
-    char i=0;
-	
-			do {
-				tmp_value=value;
-				value /=16;
-				*ptr++="0123456789ABCDEF" [(tmp_value-value*16)];
-                i++;
-			} while (value);
+	char i=0;
+	do {
+	tmp_value=value;
+	value /=16;
+	*ptr++="0123456789ABCDEF" [(tmp_value-value*16)];
+         i++;
+	} while (value);
 
             while (i<minPos){
                 *ptr++="0"[0];
-                i++;                
+                i++;
             }
 			
 			*ptr--='\0';

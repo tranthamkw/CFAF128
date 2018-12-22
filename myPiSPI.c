@@ -1,3 +1,27 @@
+/*
+ * wiringPiSPI.c:
+ *	Simplified SPI access routines
+ *	Copyright (c) 2012-2015 Gordon Henderson
+ ***********************************************************************
+ * This file is part of wiringPi:
+ *	https://projects.drogon.net/raspberry-pi/wiringpi/
+ *
+ *    wiringPi is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Lesser General Public License as
+ *    published by the Free Software Foundation, either version 3 of the
+ *    License, or (at your option) any later version.
+ *
+ *    wiringPi is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public
+ *    License along with wiringPi.
+ *    If not, see <http://www.gnu.org/licenses/>.
+ ***********************************************************************
+ */
+
 
 #include <stdint.h>
 #include <fcntl.h>
@@ -6,7 +30,12 @@
 #include <sys/ioctl.h>
 #include <asm/ioctl.h>
 #include <linux/spi/spidev.h>
-#include "mySPI.h"
+
+#include <wiringPi.h>
+
+#include "myPiSPI.h"
+
+
 // The SPI bus parameters
 //	Variables as they need to be passed as pointers later on
 
@@ -20,6 +49,18 @@ static int         spiFds [2] ;
 
 
 /*
+ * wiringPiSPIGetFd:
+ *	Return the file-descriptor for the given channel
+ *********************************************************************************
+ */
+
+int myPiSPIGetFd (int channel)
+{
+  return spiFds [channel & 1] ;
+}
+
+
+/*
  * wiringPiSPIDataRW:
  *	Write and Read a block of data over the SPI bus.
  *	Note the data ia being read into the transmit buffer, so will
@@ -28,7 +69,7 @@ static int         spiFds [2] ;
  *********************************************************************************
  */
 
-int wiringPiSPIDataRW (int channel, unsigned char *data, int len)
+int myPiSPIDataRW (int channel, unsigned char *data, unsigned char *rx, int len)
 {
   struct spi_ioc_transfer spi ;
 
@@ -40,7 +81,7 @@ int wiringPiSPIDataRW (int channel, unsigned char *data, int len)
   memset (&spi, 0, sizeof (spi)) ;
 
   spi.tx_buf        = (unsigned long)data ;
-  spi.rx_buf        = (unsigned long)data ;
+  spi.rx_buf        = (unsigned long)rx ;
   spi.len           = len ;
   spi.delay_usecs   = spiDelay ;
   spi.speed_hz      = spiSpeeds [channel] ;
@@ -56,15 +97,16 @@ int wiringPiSPIDataRW (int channel, unsigned char *data, int len)
  *********************************************************************************
  */
 
-int wiringPiSPISetupMode (int channel, int speed, int mode)
+int myPiSPISetupMode (int channel, int speed, int mode)
 {
   int fd ;
 
   mode    &= 3 ;	// Mode is 0, 1, 2 or 3
   channel &= 1 ;	// Channel is 0 or 1
 
-  if ((fd = open (channel == 0 ? spiDev0 : spiDev1, O_RDWR)) < 0)
-    return wiringPiFailure (WPI_ALMOST, "Unable to open SPI device: %s\n", strerror (errno)) ;
+  if ((fd = open (channel == 0 ? spiDev0 : spiDev1, O_RDWR)) < 0){
+	printf("Unable to open SPI device \n") ;
+	} 
 
   spiSpeeds [channel] = speed ;
   spiFds    [channel] = fd ;
@@ -84,16 +126,13 @@ int wiringPiSPISetupMode (int channel, int speed, int mode)
 }
 
 
-int initSPI(){
- //return wiringPiSPISetupMode (channel, speed, 0) ;
-return wiringPiSPISetupMode (0, 20000, 0) ;
+/*
+ * wiringPiSPISetup:
+ *	Open the SPI device, and set it up, etc. in the default MODE 0
+ *********************************************************************************
+ */
+
+int myPiSPISetup (int channel, int speed)
+{
+  return myPiSPISetupMode (channel, speed, 0) ;
 }
-
-
-unsigned char writeSPI(char data_out){
-    unsigned char TempVar=0;
-
-
-	return(TempVar);
-}
- 	

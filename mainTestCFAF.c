@@ -7,8 +7,8 @@
 
 
 
-
-
+char outText[128];
+/*
 void drawStartupScreen(void){
     char k;
     
@@ -16,7 +16,7 @@ void drawStartupScreen(void){
     strcpy(outText,"RS485Address:");
     k=strlen(outText);
     writeText(2,outText,0,k,CYAN,BLACK);
-    charToHex(address,outText,2);
+    charToHex(50,outText,2);
     k=strlen(outText);
     writeText(17,outText,0,k,CYAN,BLACK);
     updateLine(1);
@@ -40,15 +40,14 @@ void drawStartupScreen(void){
  */
 void main(void)
 {
-   
-    
-    initDisplay();
-   
-    //DATAEE_WriteByte(0,address);
-    address= DATAEE_ReadByte(0);
-    drawStartupScreen();
-    
-   
+
+
+	initializeBoard();
+
+	initDisplay();
+
+
+
 }
 /**
  End of File

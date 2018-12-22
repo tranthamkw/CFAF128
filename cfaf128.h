@@ -1,39 +1,51 @@
 /* 
  * File:   cfaf128.h
- * Author: tranthamkw
- *
- * Created on June 30, 2018, 7:19 PM
- */
 
 
-/*
- Display is Crystalfontz CFAF128128B1-0145T
+DUAL LCD driver for cfaf128x128 displays
+
+Each  Display is Crystalfontz CFAF128128B1-0145T
   https://www.crystalfontz.com/product/cfaf128128b10145t
 
-_________________
-		| - 1 [LED Anode] --\/\/[160R]/\/---- +5V
+RasPi Board V3 wiring connection:
+
+LCD 0:
+________________
+		| - 1 [LED Anode] --\/\/[110R]/\/---- +5V
 		| - 2 [LED cathode] --- gnd
 sitronix	| - 3 [spi4/!spi3] ---- +3.3v
 ST7735		| - 4 [VDD] ----------- +3.3v
 		| - 5 [VSS] ----------- gnd
 		| - 6 [CS] ------------>GPIO CE0
-		| - 7 [RESET] --------->GPIO 6
+		| - 7 [RESET] --------->GPIO WPI23
 		| - 8 [SPI DATA]------->GPIO MISO
 		| - 9 [SPI_CLK]-------->GPIO SCK
-		| - 10 [RS = DC]------->GPIO 5
+________________| - 10 [DC Data/!Command]------->GPIO WPI25
+
+LCD 1
+________________
+		| - 1 [LED Anode] --\/\/[110R]/\/---- +5V
+		| - 2 [LED cathode] --- gnd
+sitronix	| - 3 [spi4/!spi3] ---- +3.3v
+ST7735		| - 4 [VDD] ----------- +3.3v
+		| - 5 [VSS] ----------- gnd
+		| - 6 [CS] ------------>GPIO CE1
+		| - 7 [RESET] --------->GPIO WPI22
+		| - 8 [SPI DATA]------->GPIO MISO
+		| - 9 [SPI_CLK]-------->GPIO SCK
+________________| - 10 [DC]------->GPIO WPI24
 
 */
 
-void initLCD(void);
-void Set_LCD_for_write_at_X_Y(char x, char y);
-void Fill_LCD(char R, char G, char B);
-//void Put_Pixel(char x, char y, char R, char G, char B);
-void displayPixels(char* pixels, unsigned short y1);
+#include "myPiSPI.h"
+#include <wiringPi.h>
+#include <stdio.h>
 
-void setScrollDefinition(char top_fix_height, char bottom_fix_height, char scroll_direction);
-void verticalScroll(char vsp);
-
-//void delay(unsigned int time);
+// chan is either 0 or 1 for each display respectively
+void initLCD(unsigned char chan);
+void Set_LCD_for_write_at_X_Y(char x, char y,unsigned char chan);
+void Fill_LCD(char R, char G, char B,unsigned char chan);
+void displayPixels(char* pixels, unsigned short y1,unsigned char chan);
 
 
 
