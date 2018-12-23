@@ -11,7 +11,7 @@
 // htmlcolorcodes.com
 
 
-void initDisplay(void);
+void initDisplay(char * filename);
 void updateDisplay(unsigned char chan);
 void charToHex (unsigned int value, char *result, char numPos );
 void drawBox(short x1, short y1, short x2, short y2, unsigned short color);
@@ -35,6 +35,7 @@ void printLine(char* c, char length, unsigned short fcolor, unsigned short bcolo
 #define WHITE 0xFFF
 #define BLACK 0x000
 #define YELLOW 0xFF0
+#define GRAY 0x888
 
 
 

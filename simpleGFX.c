@@ -22,19 +22,134 @@ Pixel x =		[  0  ][  1  ][  2  ][  3  ][  4  ][  5  ]		[   even  ][  odd  ]		[ 1
 for line number  y,  k = 3*x/2 + 192*y
 
 */
+short splashDisplay(char * filename){
+/*		open a BMP and push to a display
+	BMP must be 128x128 and 24 bpp
+ */
+	short error = -1;
+	unsigned short bfType;
+	unsigned int bfSize;
+	unsigned short bfReserved1;
+	unsigned short bfReserved2;
+	unsigned int bfOffBits;
 
-void initDisplay(void){
-	unsigned int i,j;
-	    initLCD(0);
-	// paints splash screen from image[] in "font.h"
-	for (i=0;i<128;i++){
+	unsigned int biSize;
+	int biWidth;
+	int biHeight;
+	unsigned short biPlanes;
+	unsigned short biBitCount;
+	unsigned int biCompression;
+	unsigned int biSizeImage;
+	int biXPels;
+	int biYPels;
+	unsigned int biClrUsed;
+	unsigned int biClrImportant;
+
+	FILE *in;
+
+	char data[3];
+	unsigned short x,y,k;
+	unsigned char red,green,blue;
+
+	in=fopen(filename,"rb");
+	if (in==NULL){
+		printf("Splash image file does not exist\n");
+		fclose(in);
+		return error;
+	}
+	fread(&bfType,sizeof(bfType),1,in);
+	fread(&bfSize,sizeof(bfSize),1,in);
+	fread(&bfReserved1,sizeof(bfReserved1),1,in);
+	fread(&bfReserved2,sizeof(bfReserved2),1,in);
+	fread(&bfOffBits,sizeof(bfOffBits),1,in);
+/*	printf("Type\t%d\n",bfType);
+	printf("Size\t%d\n",bfSize);
+	printf("OffBits\t%d\n",bfOffBits);
+*/
+	if (bfType!=19778) {
+		printf("filename %s not a DIB\n",filename);
+		fclose(in);
+		return error;
+	}
+
+	fread(&biSize, sizeof(biSize),1,in);
+	fread(&biWidth,sizeof(biWidth),1,in);
+	fread(&biHeight,sizeof(biHeight),1,in);
+	fread(&biPlanes,sizeof(biPlanes),1,in);
+	fread(&biBitCount,sizeof(biBitCount),1,in);
+	fread(&biCompression,sizeof(biCompression),1,in);
+	fread(&biSizeImage,sizeof(biSizeImage),1,in);
+	fread(&biXPels,sizeof(biXPels),1,in);
+	fread(&biYPels,sizeof(biYPels),1,in);
+	fread(&biClrUsed,sizeof(biClrUsed),1,in);
+	fread(&biClrImportant,sizeof(biClrImportant),1,in);
+/*
+	printf("Width\t%d\n",biWidth);
+	printf("Height\t%d\n",biHeight);
+	printf("BitPerPixel\t%d\n",biBitCount);
+*/
+	if (biBitCount!=24){
+		printf("filename %s not 24 bit per pixel\n",filename);
+		fclose(in);
+		return error;
+	}
+	if (biWidth!=128){
+		printf("filename %s not 128 pixels wide\n",filename);
+		fclose(in);
+		return error;
+	}
+	if (biHeight!=128){
+		printf("filename %s not 128 pixels high\n",filename);
+		fclose(in);
+		return error;
+	}
+	error = 0;
+	for (y=0;y<128;y++){
+	for (x=0;x<128;x++){
+		fread(&data,sizeof(data),1,in);
+			red = (unsigned char) ((data[0]&0xF0)>>4);
+			green = (unsigned char) ((data[1]&0xF0)>>4);
+			blue = (unsigned char) ((data[2]&0xF0)>>4);
+	//is x even or odd
+		if((x & 0x01) == 1) {
+		//odd
+			k=(x*3/2);
+			pixelBuffer[y*192 + k]=(pixelBuffer[y*192 +k] & 0xF0) | (red);
+			pixelBuffer[y*192 + k+1]=(green<<4) | blue;
+		} else {
+			//even
+			k=(x*3/2);
+		pixelBuffer[y*192 + k] = (red <<4) | green;
+		pixelBuffer[y*192 + k + 1] = (pixelBuffer[y*192 + k+1] & 0x0F) | (blue<<4);
+		}
+
+	}
+	}
+	fclose(in);
+
+return error;
+
+
+}
+
+void initDisplay(char * filename){
+	unsigned short i,j;
+    initLCD(0);
+
+//	fillLCD(GRAY,0);
+
+	if (splashDisplay(filename)){
+		// got an error, so 
+		// paints splash screen from image[] data in "font.h"
+		for (i=0;i<128;i++){
 			for (j=0;j<192;j++){
 				pixelBuffer[j+192*i]=image[j+192*i];
 			}
+			}
 	}
-
 	// update full image
     displayPixels(pixelBuffer, 0, 128, 0);
+
 }
 
 void updateDisplay(unsigned char chan){
@@ -52,7 +167,6 @@ void drawBox(short x1, short y1, short x2, short y2, unsigned short color){
 		setPixel(x2,j,color);
 	}
 }
-
 
 void drawLine(short x0, short y0, short x1, short y1, unsigned short color){
 	char steep = (abs(y1-y0) > abs(x1-x0));

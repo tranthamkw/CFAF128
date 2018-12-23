@@ -215,27 +215,31 @@ void Set_LCD_for_write_at_X_Y(char x, char y,unsigned char chan)  {
 
 
 
-void Fill_LCD(char R, char G, char B,unsigned char chan)  {
+void fillLCD(unsigned short bcolor, unsigned char chan)  {
     /* 12 bit ; 4bits per pixel
      byte array:  [R,G][B,R][G,B]
      pixel        [n_even][n_odd]
      */
   int i,k;
-  char color[3];
+  unsigned char color[3], R,G,B;
   Set_LCD_for_write_at_X_Y(0, 0,chan);
-  
-  color[0]=(R <<4) | G;
-  color[1]=(B <<4) | R;
-  color[2]=(G <<4) | B;
+
+	B=(unsigned char)((bcolor & 0xF00)>>8);
+	G=(unsigned char)((bcolor & 0x0F0)>>4);
+	R=(unsigned char)(bcolor & 0x00F);
+
+  color[0]= (R<<4)| G;
+  color[1]= (B<<4)| R;
+  color[2]=	(G<<4)| B;
   //Fill display with a given RGB value
   for (i = 0; i < 128; i++) {
       for (k=0;k<64;k++){  // color contains two pixels of data so 128/2 = 64
           sendSPIData(color,3,chan);
       }
-  }     
-
-
   }
+
+
+}
 
 
 

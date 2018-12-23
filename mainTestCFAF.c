@@ -16,8 +16,13 @@ char data[32];
 unsigned short length,x0,y0;
 float volts=0.0;
 
+
 	initializeBoard();
-	initDisplay();
+
+if (argc==2){
+	strcpy(data, argv[1]);
+	initDisplay(data);
+}
 
 /*	drawBox(30,30,100,100,GREEN);
 	drawCircle(25,25,20, BLACK);
@@ -27,14 +32,14 @@ float volts=0.0;
 
 	updateDisplay(0);
 */
-
+/*
 	for (i=0;i<50;i++){
 		readRS485AnalogRecorderSimple(0x20,0,&volts);
 		sprintf(data,"%d: %.2f",i,volts);
 		length = strlen(data);
 		printLine(data,length,WHITE,BLACK);
 	}
-
+*/
 
 return 0;
 

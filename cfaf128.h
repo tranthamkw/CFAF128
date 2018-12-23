@@ -44,7 +44,7 @@ ________________| - 10 [DC]------->GPIO WPI24
 // chan is either 0 or 1 for each display respectively
 void initLCD(unsigned char chan);
 void displayPixels(char* pixels, unsigned char y1,unsigned char y2, unsigned char chan);
-
+void fillLCD(unsigned short bcolor,unsigned char chan);
 
 
 // these no longer public.  all image maniuplation is done at the simpleGFX level, and displayPixels is used
