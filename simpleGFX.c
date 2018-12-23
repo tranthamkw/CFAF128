@@ -22,11 +22,11 @@ Pixel x =		[  0  ][  1  ][  2  ][  3  ][  4  ][  5  ]		[   even  ][  odd  ]		[ 1
 for line number  y,  k = 3*x/2 + 192*y
 
 */
-short splashDisplay(char * filename){
-/*		open a BMP and push to a display
+short loadBMP(char * filename){
+/*		open a BMP and write to the pixelBuffer.
 	BMP must be 128x128 and 24 bpp
  */
-	short error = -1;
+	short loaded = 0;
 	unsigned short bfType;
 	unsigned int bfSize;
 	unsigned short bfReserved1;
@@ -55,7 +55,7 @@ short splashDisplay(char * filename){
 	if (in==NULL){
 		printf("Splash image file does not exist\n");
 		fclose(in);
-		return error;
+		return loaded;
 	}
 	fread(&bfType,sizeof(bfType),1,in);
 	fread(&bfSize,sizeof(bfSize),1,in);
@@ -69,7 +69,7 @@ short splashDisplay(char * filename){
 	if (bfType!=19778) {
 		printf("filename %s not a DIB\n",filename);
 		fclose(in);
-		return error;
+		return loaded;
 	}
 
 	fread(&biSize, sizeof(biSize),1,in);
@@ -91,19 +91,19 @@ short splashDisplay(char * filename){
 	if (biBitCount!=24){
 		printf("filename %s not 24 bit per pixel\n",filename);
 		fclose(in);
-		return error;
+		return loaded;
 	}
 	if (biWidth!=128){
 		printf("filename %s not 128 pixels wide\n",filename);
 		fclose(in);
-		return error;
+		return loaded;
 	}
 	if (biHeight!=128){
 		printf("filename %s not 128 pixels high\n",filename);
 		fclose(in);
-		return error;
+		return loaded;
 	}
-	error = 0;
+	loaded = 1;
 	for (y=0;y<128;y++){
 	for (x=0;x<128;x++){
 		fread(&data,sizeof(data),1,in);
@@ -127,20 +127,18 @@ short splashDisplay(char * filename){
 	}
 	fclose(in);
 
-return error;
+return loaded;
 
 
 }
 
-void initDisplay(char * filename){
-	unsigned short i,j;
-    initLCD(0);
-
-//	fillLCD(GRAY,0);
-
+void initDisplay(unsigned char chan){
+//	unsigned short i,j;
+    initLCD(chan);
+/*
 	if (splashDisplay(filename)){
 		// got an error, so 
-		// paints splash screen from image[] data in "font.h"
+		// paint splash screen from image[] data in "font.h"
 		for (i=0;i<128;i++){
 			for (j=0;j<192;j++){
 				pixelBuffer[j+192*i]=image[j+192*i];
@@ -148,8 +146,8 @@ void initDisplay(char * filename){
 			}
 	}
 	// update full image
-    displayPixels(pixelBuffer, 0, 128, 0);
-
+//    displayPixels(pixelBuffer, 0, 128, chan);
+*/
 }
 
 void updateDisplay(unsigned char chan){
@@ -250,6 +248,31 @@ void setPixel (short x0, short y0, unsigned short color){
 }
 
 
+void clearCanvas(unsigned short color){
+	unsigned short k,x,y;
+	char red, green, blue;
+	blue = (char) ((color & 0xF00)>>8);
+	green = (char)((color & 0x0F0)>>4);
+	red = (char)(color & 0x00F);
+	for (y=0;y<128;y++){
+	for (x=0;x<128;x++){
+	//is x even or odd
+	if((x & 0x01) == 1) {
+		//odd
+		k=(x*3/2);
+		pixelBuffer[y*192 + k]=(pixelBuffer[y*192 +k] & 0xF0) | (red);
+		pixelBuffer[y*192 + k+1]=(green<<4) | blue;
+	} else {
+		//even
+		k=(x*3/2);
+	pixelBuffer[y*192 + k] = (red <<4) | green;
+	pixelBuffer[y*192 + k + 1] = (pixelBuffer[y*192 + k+1] & 0x0F) | (blue<<4);
+	}
+	}// x
+	}//y
+}
+
+
 void writeText(unsigned char x0,unsigned char y0, char* c, char length, unsigned short fcolor){
 /*
 	writes text over existing image contained in pixel buffer.
@@ -266,16 +289,16 @@ void writeText(unsigned char x0,unsigned char y0, char* c, char length, unsigned
 		}
 }
 
-void printLine(char* c, char length, unsigned short fcolor, unsigned short bcolor){
+void printLine(char* c, char length, unsigned short fcolor, unsigned short bcolor,unsigned char chan){
 	/*
 		fast clear bottom line and write a string. 
 	*/
-	//clear bottom line
 	short k,x,y;
 	char red, green, blue;
 	blue = (char) ((bcolor & 0xF00)>>8);
 	green = (char)((bcolor & 0x0F0)>>4);
 	red = (char)(bcolor & 0x00F);
+	//clear bottom line
 	for (y=0;y<9;y++){
 	for (x=0;x<128;x++){
 	//is x even or odd
@@ -295,7 +318,7 @@ void printLine(char* c, char length, unsigned short fcolor, unsigned short bcolo
 	// write the text to image data
 	writeText(0,0,c,length,fcolor);
 	//push out this change immediately
-    displayPixels(pixelBuffer, 0, 9, 0);
+    displayPixels(pixelBuffer, 0, 9, chan);
 }
 
 
