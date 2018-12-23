@@ -42,18 +42,13 @@ typedef struct tagBitmapInfoHeader {
 
 class Bitmap {
 public:
-
     //variables
-
     bool loaded;
-
     int width;
     int height;
     unsigned short bpp;  // this should be 24 as only deal with 24bit
-
     int byteWidth;            //the width in bytes of the image
     int padWidth;             //the width in bytes of the added image
-
 
     //methods
     Bitmap(void);
@@ -64,19 +59,16 @@ public:
     bool saveBMP(char *);
     unsigned int getPixel(int row, int col);
     void setPixel(int row, int col, char red, char green, char blue);
-    
 
 private:
     //variables
-
     unsigned char *data;
     BitmapFileHeader bmfh;
     BitmapInfoHeader bmih;
     unsigned int dataSize;                //size of the data in the file
-
     //methods
     void reset(void);
-    
+ 
 };
 
 

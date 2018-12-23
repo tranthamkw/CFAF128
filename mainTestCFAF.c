@@ -28,8 +28,8 @@ float volts=0.0;
 	updateDisplay(0);
 */
 
-	for (i=0;i<100;i++){
-//		readRS485AnalogRecorderSimple(0x20,0,&volts);
+	for (i=0;i<50;i++){
+		readRS485AnalogRecorderSimple(0x20,0,&volts);
 		sprintf(data,"%d: %.2f",i,volts);
 		length = strlen(data);
 		printLine(data,length,WHITE,BLACK);

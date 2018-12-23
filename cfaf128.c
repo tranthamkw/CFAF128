@@ -26,6 +26,7 @@
 #define ST7735_VSCRDEF 0x33
 #define ST7735_VSCRSADD 0x37
 
+#define SPI_SPEED 10000000
 // Defines for piBoard V4 (RASPI_Robot)
 // for display #1
 //#define LCD_DC 24
@@ -79,7 +80,7 @@ void initLCD(unsigned char chan){
 	pinMode(LCD_RST-chan,OUTPUT);
 	pinMode(LCD_DC-chan,OUTPUT);
 
-	myPiSPISetup(chan,8000000);
+	myPiSPISetup(chan,SPI_SPEED);
 
 	resetLCD(chan);
 

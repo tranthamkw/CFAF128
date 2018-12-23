@@ -1,15 +1,15 @@
 /*
  * bitmap routines
- * 
+ *
  * Only deal with 24 bit bitmaps.
  *
  *   general formula for getting pixel info
  *  int i=(col+(rows*(mywidth)))*3 + rows*offset;
- 
+
     red = pB->data[i+2];
     green = pB->data[i+1];
     blue = pB->data[i];
- 
+
  */
 
 
@@ -22,26 +22,23 @@ unsigned int Bitmap::getPixel(int row, int col){
     green = 0;
     blue = 0;
     if ((row<height)&(col<width)&(row>0)&(col>0)){
-       
+
        int i=(col+(row*(width)))*3 + row*(padWidth - byteWidth);
        red = data[i+2];
        green = data[i+1];
        blue = data[i];
-    }               
-  return (red<<16|green<<8|blue);                   
-                     
-}  
+    }
+  return (red<<16|green<<8|blue);
+}
 
 void Bitmap::setPixel(int row, int col, char red, char green, char blue){
      if ((row<height)&(col<width)&(row>0)&(col>0)){
-       
        int i=(col+(row*(width)))*3 + row*(padWidth - byteWidth);
        data[i+2]=red;
        data[i+1]=green;
        data[i]=blue;
-    }               
-}                  
-
+    }
+}
 
 //basic constructor
 Bitmap::Bitmap(){
@@ -52,15 +49,12 @@ Bitmap::Bitmap(){
 // constructor to make an empty bmp of size width X height X bpp
 Bitmap::Bitmap(int newwidth, int newheight, unsigned short newbpp){
         reset();
-        
     width=newwidth;
     height=newheight;
     bpp=newbpp;
      // bpp must be 24.
-     
     //calculate the witdh of the final image in bytes
     byteWidth=padWidth=(width*3);
-
     //adjust the width for padding as necessary
     //
     while(padWidth%4!=0) {
@@ -69,7 +63,7 @@ Bitmap::Bitmap(int newwidth, int newheight, unsigned short newbpp){
     int offset= padWidth-byteWidth;
     //calculate the size of the image data with padding
     dataSize=(width*height*3)+height*offset;
-               
+
          //set up the data buffer for the image data
     data = new unsigned char[dataSize];
       // set up header information for new bmp... if it gets saved
@@ -78,7 +72,6 @@ Bitmap::Bitmap(int newwidth, int newheight, unsigned short newbpp){
     bmfh.bfReserved1=0;
     bmfh.bfReserved2=0;
     bmfh.bfOffBits =54;
-    
     bmih.biBitCount=bpp;
     bmih.biClrImportant=0;
     bmih.biClrUsed=0;
@@ -91,11 +84,10 @@ Bitmap::Bitmap(int newwidth, int newheight, unsigned short newbpp){
     bmih.biXPelsPerMeter=2834;   // not sure what this number is supposed to be. This works though
     bmih.biYPelsPerMeter=2834;
     // clear the data array.
-    
+
     for (unsigned int i = 0; i!=dataSize; i++){
         data[i]=0x88; // this is essentially gray.
         }
-           
 }
 
 //constructor loads the bitmap when it is created
@@ -118,10 +110,8 @@ bool Bitmap::saveBMP(char *file){
 
     //bitmap is not loaded yet
     loaded=false;
-    
     //open the file for writing in binary mode
     out=fopen(file,"wb");
-
     //if the file does not exist return in error
     if(out==NULL) {
 
@@ -141,15 +131,10 @@ bool Bitmap::saveBMP(char *file){
     fwrite(&bmfh.bfReserved1,sizeof(bmfh.bfReserved1),1,out);
     fwrite(&bmfh.bfReserved2,sizeof(bmfh.bfReserved2),1,out);
     fwrite(&bmfh.bfOffBits,sizeof(bmfh.bfOffBits),1,out);
-
     fwrite(&bmih,sizeof(BitmapInfoHeader),1,out);
-       
     fwrite(data,sizeof(char),dataSize,out);
-
     fclose(out);
-
     return true;
-
 }
 
 /*
@@ -162,13 +147,12 @@ bool Bitmap::loadBMP(char *file) {
     FILE *in;                  //file stream for reading
     //unsigned char *tempData;       //temp storage for image data
     int numColours;            //total available colours
-
     //bitmap is not loaded yet
     loaded=false;
 
     //make sure memory is not lost
     if(data!=0) {
-        delete[] data;
+        delete[] data; // delete is a c++ operator
     }
 
     //open the file for reading in binary mode
@@ -201,8 +185,7 @@ bool Bitmap::loadBMP(char *file) {
     cout << "bmfh.bfReserved1 =" << bmfh.bfReserved1<< "\t";
     cout << "bmfh.bfReserved2 =" << bmfh.bfReserved2<< "\n";
     cout << "bmfh.OffBits     =" << bmfh.bfOffBits << "\t";
-    
-     
+
     //check for the magic number that says this is a bitmap
     if(bmfh.bfType!=BITMAP_MAGIC_NUMBER) {
         cout<<"Not a Device Independent Bitmap \n";
@@ -215,9 +198,8 @@ bool Bitmap::loadBMP(char *file) {
      * note that this stucture is already a multiple of 4 bytes so we
      * don't have to break this one up.
      */
-     
+ 
     fread(&bmih,sizeof(BitmapInfoHeader),1,in);
-
 
     //save the width, height and bits per pixel for external use
     width=bmih.biWidth;
@@ -228,17 +210,16 @@ bool Bitmap::loadBMP(char *file) {
     cout << "sizeof(BitmapInfoHeader)=" << sizeof(BitmapInfoHeader) << endl;
     cout <<"\n";    
 	cout << "biBitCount      =" << bmih.biBitCount << endl;
-        cout << "biClrImportant  =" << bmih.biClrImportant << "\t";
+    cout << "biClrImportant  =" << bmih.biClrImportant << "\t";
 	cout << "biClrUsed       =" << bmih.biClrUsed << endl;
-        cout << "biCompression   =" << bmih.biCompression << "\t";
+    cout << "biCompression   =" << bmih.biCompression << "\t";
 	cout << "biHeight        =" << bmih.biHeight << endl;
-        cout << "biPlanes        =" << bmih.biPlanes << "\t";
+    cout << "biPlanes        =" << bmih.biPlanes << "\t";
 	cout << "biSize          =" << bmih.biSize << endl;
-        cout << "biSizeImage     =" << bmih.biSizeImage << "\t";
+    cout << "biSizeImage     =" << bmih.biSizeImage << "\t";
 	cout << "biWidth         =" << bmih.biWidth << endl;
-        cout << "biXPelsPerMeter =" << bmih.biXPelsPerMeter << "\t";
-        cout << "biYPelsPerMeter =" << bmih.biYPelsPerMeter << endl;
-    
+    cout << "biXPelsPerMeter =" << bmih.biXPelsPerMeter << "\t";
+    cout << "biYPelsPerMeter =" << bmih.biYPelsPerMeter << endl;
 
     //calculate the witdh of the final image in bytes
     byteWidth=padWidth=(width*3);
@@ -253,18 +234,15 @@ bool Bitmap::loadBMP(char *file) {
     //calculate the size of the image data with padding
     dataSize=(width*height*3)+height*offset;
 
-    /*
     cout << "byteWidth       ="<<byteWidth<< "\t";
     cout << "padWidth        ="<<padWidth<< endl;
     cout << "offset          ="<<offset<<"\t";
     cout << "dataSize        =" << dataSize<< endl;
-    */
-
 
     //if the bitmap is not 24 bits per pixel
     //return in error
     if(bpp!=24) {
-	  printf("Not 24 bit per pixel\n");
+	 printf("Not 24 bit per pixel\n");
        fclose(in);
        return false;
     }
@@ -273,17 +251,13 @@ bool Bitmap::loadBMP(char *file) {
 
     //exit if there is not enough memory
     if(data==NULL) {
-
         fclose(in);
         return false;
     }
-
     //read in the entire image
     fread(data,sizeof(char),dataSize,in);
-
     //close the file now that we have all the info
     fclose(in);
-
     //return success
     return true;
 }
@@ -292,7 +266,7 @@ bool Bitmap::loadBMP(char *file) {
 void Bitmap::reset(void) {
     loaded=false;
     data=0;
-    
+
 }
 
 
