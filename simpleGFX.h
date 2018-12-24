@@ -25,8 +25,8 @@ void writeText(unsigned char x0,unsigned char y0, char* c, char length, unsigned
 void charToHex (unsigned int value, char *result, char numPos );
 
 
-//quickly manipulates only rows 0 to 9 and pushes text to display.
-void printLine(char* c, char length, unsigned short fcolor, unsigned short bcolor, unsigned char chan);
+//quickly manipulates only rows row to 9+row and pushes text to display.
+void printLine(unsigned char row, char* c, char length, unsigned short fcolor, unsigned short bcolor, unsigned char chan);
 
 
 // 12 bits per pixel

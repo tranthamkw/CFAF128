@@ -289,17 +289,19 @@ void writeText(unsigned char x0,unsigned char y0, char* c, char length, unsigned
 		}
 }
 
-void printLine(char* c, char length, unsigned short fcolor, unsigned short bcolor,unsigned char chan){
+void printLine(unsigned char row, char* c, char length, unsigned short fcolor, unsigned short bcolor,unsigned char chan){
 	/*
 		fast clear bottom line and write a string. 
 	*/
-	short k,x,y;
+	unsigned short k,x,y;
 	char red, green, blue;
 	blue = (char) ((bcolor & 0xF00)>>8);
 	green = (char)((bcolor & 0x0F0)>>4);
 	red = (char)(bcolor & 0x00F);
-	//clear bottom line
-	for (y=0;y<9;y++){
+
+	if (row > 119) row = 119;
+	//clear line
+	for (y=row;y<(9+row);y++){
 	for (x=0;x<128;x++){
 	//is x even or odd
 		if((x & 0x01) == 1) {
@@ -316,9 +318,9 @@ void printLine(char* c, char length, unsigned short fcolor, unsigned short bcolo
 	}
 	}
 	// write the text to image data
-	writeText(0,0,c,length,fcolor);
+	writeText(0,row,c,length,fcolor);
 	//push out this change immediately
-    displayPixels(pixelBuffer, 0, 9, chan);
+    displayPixels(pixelBuffer, row, row+9, chan);
 }
 
 
