@@ -1,11 +1,31 @@
 /* 
- * File:   font.h
- * Author: tranthamkw
- *
- * Created on June 30, 2018, 7:17 PM
+ File:   font.h
+
+Reference : Adafruit GFX font
+
+Font data to create bitmap text
+Each character uses five bytes. Each character is 5 columns by 8 rows
+Index ASCII character k with myFont[k*5]
+Byte offsets 0,1, ... 4 are interpreted as data for each column of the character.
+
+ASCII character 65 "A"
+myFont[65 * 5 + 0,1,2,3,4,5]= 0x7c, 0x12, 0x11, 0x12, 0x7c
+
+		 7 1 1 1 7
+		 C 2 1 2 C
+bit-----+-+-+-+-+-+-
+0		 0 0 1 0 0
+1		 0 1 0 1 0
+2		 1 0 0 0 1
+3		 1 0 0 0 1
+4		 1 1 1 1 1
+5		 1 0 0 0 1
+6		 1 0 0 0 1
+7		 0 0 0 0 0
+
+
+
  */
-
-
 
 const unsigned char myFont[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00,

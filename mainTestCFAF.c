@@ -23,7 +23,7 @@ float volts=0.0;
 
 if (argc==2){
 	strcpy(data, argv[1]);
-	if(loadBMP(data)) updateDisplay(1);
+	if(loadBMP(data)) updateDisplay(0);
 }
 
 	clearCanvas(BLACK);
@@ -33,14 +33,14 @@ if (argc==2){
 		drawLine(10,10,i,100,RED);
 	}
 
-	updateDisplay(0);
+	updateDisplay(1);
 
 
 	for (i=0;i<50;i++){
 		readRS485AnalogRecorderSimple(0x20,0,&volts);
 		sprintf(data,"%d: %.2f",i,volts);
 		length = strlen(data);
-		printLine(data,length,WHITE,BLACK,0);
+		printLine(data,length,WHITE,BLACK,1);
 	}
 
 
