@@ -133,21 +133,7 @@ return loaded;
 }
 
 void initDisplay(unsigned char chan){
-//	unsigned short i,j;
-    initLCD(chan);
-/*
-	if (splashDisplay(filename)){
-		// got an error, so 
-		// paint splash screen from image[] data in "font.h"
-		for (i=0;i<128;i++){
-			for (j=0;j<192;j++){
-				pixelBuffer[j+192*i]=image[j+192*i];
-			}
-			}
-	}
-	// update full image
-//    displayPixels(pixelBuffer, 0, 128, chan);
-*/
+	    initLCD(chan);
 }
 
 void updateDisplay(unsigned char chan){

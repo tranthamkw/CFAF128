@@ -5,11 +5,17 @@
 #include <math.h>
 #include "piBoard.h"
 #include "RS485Devices.h"
-//#include "cfaf128.h"
 
 
 /*
-                         Main application to test CFAF 128x128 display on RasPi
+                         Main application to test dual CFAF 128x128 display on RasPi
+
+	usage: sudo ./mainTestCFAF <name of bmp to load>
+
+	bmp must be 128x128x24colors
+
+	program draws simple graphics, interfaces to a RS485 instrument and writes text response, and shows bmp.
+
  */
 int main(int argc, char **argv) {
 short i,j;
@@ -41,7 +47,7 @@ if (argc==2){
 
 //print some quick text from a device
 	for (i=0;i<50;i++){
-		readRS485AnalogRecorderSimple(0x20,0,&volts);
+		readRS485AnalogRecorderSimple(0xA2,0,&volts);  // instrument address 0xA2 must be connected to the RS485 port
 		sprintf(data,"%d: %.2f",i,volts);
 		length = strlen(data);
 		printLine(45,data,length,WHITE,BLACK,0);
